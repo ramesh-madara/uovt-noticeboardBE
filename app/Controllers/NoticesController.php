@@ -61,10 +61,10 @@ class NoticesController extends ResourceController
 
         if (empty($activeNotices)) {
             return $this->respond([
-                'status' => 404,
+                'status' => 200,
                 'error' => true,
                 'message' => 'No active notices found.',
-            ], 404);
+            ], 200);
         }
 
         return $this->respond([

@@ -34,6 +34,7 @@ class CreateNoticesTable extends Migration
             ],
             'date' => [
                 'type' => 'DATE',
+                'null' => true,
             ],
             'status' => [
                 'type' => 'VARCHAR',
