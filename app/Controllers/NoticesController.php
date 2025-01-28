@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\DynamicModel;
+use CodeIgniter\RESTful\ResourceController;
+
+class NoticesController extends ResourceController
+{
+    public function insert()
+    {
+        $data = $this->request->getPost();
+
+        $requiredFields = ['title', 'status', 'content', 'type', 'start_date', 'end_date', 'date'];
+        $missingFields = array_diff($requiredFields, array_keys($data));
+
+        if (!empty($missingFields)) {
+            return $this->respond([
+                'status' => 400,
+                'error' => true,
+                'message' => 'Missing required fields: ' . implode(', ', $missingFields),
+            ], 400);
+        }
+
+        $dynamicModel = new DynamicModel();
+        $dynamicModel->setTableConfig(
+            'notices',
+            'id',
+            ['title', 'content', 'status', 'type', 'start_date', 'end_date', 'date']
+        );
+
+        if ($dynamicModel->insert($data)) {
+            return $this->respondCreated([
+                'status' => 201,
+                'error' => false,
+                'message' => 'Notice added successfully.',
+            ]);
+        }
+
+        return $this->respond([
+            'status' => 500,
+            'error' => true,
+            'message' => 'Failed to insert notice.',
+        ], 500);
+    }
+
+    public function fetchActive()
+    {
+        $dynamicModel = new DynamicModel();
+        $dynamicModel->setTableConfig(
+            'notices',
+            'id',
+            ['id', 'title', 'content', 'type', 'start_date', 'end_date', 'date', 'status']
+        );
+
+        $today = date('Y-m-d');
+
+        $activeNotices = $dynamicModel->where('status', 'active')
+            ->where('end_date >=', $today)
+            ->findAll();
+
+        if (empty($activeNotices)) {
+            return $this->respond([
+                'status' => 404,
+                'error' => true,
+                'message' => 'No active notices found.',
+            ], 404);
+        }
+
+        return $this->respond([
+            'status' => 200,
+            'error' => false,
+            'data' => $activeNotices,
+        ]);
+    }
+}
