@@ -28,8 +28,8 @@ class NoticesController extends ResourceController
             'id',
             ['title', 'content', 'status', 'type', 'start_date', 'end_date', 'date']
         );
-
         if ($dynamicModel->insert($data)) {
+            $data['id'] = $dynamicModel->getInsertID();
             return $this->respondCreated([
                 'status' => 201,
                 'error' => false,
@@ -89,6 +89,7 @@ class NoticesController extends ResourceController
                 'status' => 200,
                 'error' => false,
                 'message' => 'Notice updated successfully.',
+                'id' => $id,
             ]);
         }
 
