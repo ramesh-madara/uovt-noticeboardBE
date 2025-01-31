@@ -22,4 +22,6 @@ header('Access-Control-Allow-Origin: *');
 $routes->group('notices', function ($routes) {
     $routes->post('insert', 'NoticesController::insert');
     $routes->get('active', 'NoticesController::fetchActive');
+    $routes->put('update/(:num)', 'NoticesController::update_notice/$1');
+    $routes->delete('delete/(:num)', 'NoticesController::delete_notice/$1');
 });

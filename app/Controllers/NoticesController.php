@@ -34,6 +34,8 @@ class NoticesController extends ResourceController
                 'status' => 201,
                 'error' => false,
                 'message' => 'Notice added successfully.',
+                'data' => $data,
+
             ]);
         }
 
@@ -55,9 +57,7 @@ class NoticesController extends ResourceController
 
         $today = date('Y-m-d');
 
-        $activeNotices = $dynamicModel->where('status', 'active')
-            ->where('end_date >=', $today)
-            ->findAll();
+        $activeNotices = $dynamicModel->findAll();
 
         if (empty($activeNotices)) {
             return $this->respond([
@@ -72,5 +72,50 @@ class NoticesController extends ResourceController
             'error' => false,
             'data' => $activeNotices,
         ]);
+    }
+
+    public function update_notice($id)
+    {
+        $data = $this->request->getRawInput();
+        $dynamicModel = new DynamicModel();
+        $dynamicModel->setTableConfig(
+            'notices',
+            'id',
+            ['title', 'content', 'status', 'type', 'start_date', 'end_date', 'date']
+        );
+
+        if ($dynamicModel->update($id, $data)) {
+            return $this->respond([
+                'status' => 200,
+                'error' => false,
+                'message' => 'Notice updated successfully.',
+            ]);
+        }
+
+        return $this->respond([
+            'status' => 500,
+            'error' => true,
+            'message' => 'Failed to update notice.',
+        ], 500);
+    }
+
+    public function delete_notice($id)
+    {
+        $dynamicModel = new DynamicModel();
+        $dynamicModel->setTableConfig('notices', 'id', []);
+
+        if ($dynamicModel->delete($id)) {
+            return $this->respondDeleted([
+                'status' => 200,
+                'error' => false,
+                'message' => 'Notice deleted successfully.',
+            ]);
+        }
+
+        return $this->respond([
+            'status' => 500,
+            'error' => true,
+            'message' => 'Failed to delete notice.',
+        ], 500);
     }
 }
