@@ -115,7 +115,7 @@ class NoticesController extends ResourceController
         return $this->respond([
             'status' => 500,
             'error' => true,
-            'message' => 'Ooops! Failed to delete notice.',
+            'message' => 'Oops! Failed to delete notice.',
         ], 500);
     }
 }
