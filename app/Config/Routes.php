@@ -25,3 +25,4 @@ $routes->group('notices', function ($routes) {
     $routes->put('update/(:num)', 'NoticesController::update_notice/$1');
     $routes->delete('delete/(:num)', 'NoticesController::delete_notice/$1');
 });
+// test
